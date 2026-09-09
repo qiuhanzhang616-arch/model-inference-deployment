@@ -1,0 +1,4 @@
+interface:
+  display_name: "ModelArts 通用部署与矩阵压测"
+  short_description: "先确认场景和矩阵，再部署调优、断点测试、低频定时检查并自动生成分配置 Excel"
+  default_prompt: "使用 $modelarts-glm-deploy-bench，先确认我的环境、测试场景和完整矩阵，再准备脚本、执行测试并自动生成 Excel。"
