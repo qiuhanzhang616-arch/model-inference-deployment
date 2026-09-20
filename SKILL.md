@@ -1,95 +1,95 @@
 ---
 name: model-inference-deployment
-description: 为不同模型、推理框架、加速器和云上或本地平台规划、实施及验收可回退的推理部署。适用于新建、迁移、扩容、重建或标准化模型服务；开始前必须完成部署问询并形成现状基线与目标基线。性能调优和正式性能测试应作为后续独立工作，不在未确认需求时套用 GLM、Qwen 或特定硬件参数。
+description: Plan, implement, and validate rollback-safe inference deployments across models, inference frameworks, accelerators, and cloud or local platforms. Use for new services, migrations, scaling, rebuilds, or standardization. Complete the deployment questionnaire and document current and target baselines first. Treat performance tuning and formal performance testing as separate follow-on work, and never apply GLM, Qwen, or hardware-specific parameters before requirements are confirmed.
 ---
 
-# 模型推理部署
+# Model Inference Deployment
 
-将用户提供的模型与业务要求转化为可追溯、可验证、可回退的在线或离线推理服务。部署成功的标准是完整验收通过，不是容器启动或端口可访问。
+Turn the user's model and business requirements into a traceable, verifiable, and rollback-safe online or offline inference service. Deployment succeeds only after complete acceptance, not merely when a container starts or a port responds.
 
-## 第一步：先问清楚，再行动
+## First step: clarify before acting
 
-收到新项目的部署、迁移、重建或扩容请求时，先完整读取 [部署前问询清单](references/pre-deployment-checklist.md)。
+For a new deployment, migration, rebuild, or scaling request, first read the complete [pre-deployment checklist](references/pre-deployment-checklist.md).
 
-1. 从对话、文件和只读检查中预填已知答案，并请用户确认。
-2. 在模型、工作负载、目标平台、容量、安全边界和验收条件未明确前，不选择规格、不写最终启动参数、不创建或修改云资源。
-3. 用户可以把暂时不知道的项目标为“待检查”；能通过只读方式确认的技术细节不要要求用户重复查找。
-4. 在任何配置写入、资源创建、重启、流量切换或数据迁移前，展示待执行清单并取得对应授权。
+1. Prefill known answers from the conversation, files, and read-only inspection, then ask the user to confirm them.
+2. Until the model, workload, target platform, capacity, security boundaries, and acceptance criteria are clear, do not select a final size, write final launch parameters, or create or modify cloud resources.
+3. The user may mark unknown items as pending inspection. Do not ask them to rediscover technical facts that read-only checks can establish.
+4. Before writing configuration, creating resources, restarting, switching traffic, or migrating data, present the exact execution checklist and obtain authorization for those actions.
 
-## 区分部署类型
+## Distinguish deployment types
 
-- **全新部署**：从空环境建立模型服务、网络、安全、存储、监控和调用入口。
-- **原地重建**：保留业务入口或资源，替换镜像、权重、运行时或启动配置。
-- **迁移**：跨账号、Region、集群、硬件、框架或服务形态迁移。
-- **扩缩容**：改变副本、节点或并行拓扑，但不默认改变模型行为。
-- **标准镜像/模板**：制作可复制镜像、IaC、部署脚本或操作手册。
+- **New deployment**: build the model service, network, security, storage, monitoring, and access endpoint from an empty environment.
+- **In-place rebuild**: preserve the business endpoint or resources while replacing the image, weights, runtime, or launch configuration.
+- **Migration**: move across accounts, regions, clusters, hardware, frameworks, or service forms.
+- **Scale up or down**: change replicas, nodes, or parallel topology without implicitly changing model behavior.
+- **Standard image or template**: produce a reusable image, IaC, deployment script, or runbook.
 
-每种类型都要明确源端、目标端、停机方式、数据一致性、回退点和责任边界。
+For every type, define the source and target, downtime method, data consistency, rollback point, and responsibility boundary.
 
-## 形成部署基线
+## Establish the deployment baseline
 
-问询完成后，使用 [部署基线模板](references/deployment-baseline.md) 输出并请用户确认：
+After the questionnaire, complete the [deployment baseline template](references/deployment-baseline.md) and ask the user to confirm:
 
-- 当前状态和证据来源；
-- 目标架构和模型服务合同；
-- 尚未确认或互相冲突的信息；
-- 资源、安全、网络、存储和运维边界；
-- 准备执行的步骤、影响范围和预计时间；
-- 功能、容量和可靠性验收项；
-- 备份及回退方案。
+- current state and evidence sources;
+- target architecture and model-service contract;
+- unconfirmed or conflicting information;
+- resource, security, network, storage, and operations boundaries;
+- planned steps, impact, and expected duration;
+- functional, capacity, and reliability acceptance items;
+- backup and rollback plan.
 
-如果是全新环境，“当前状态”可以为空，但目标基线不能省略。配置文件、控制台页面和实际进程不一致时，以经过核验的实际运行证据为准，并记录差异。
+For a new environment, the current state may be empty, but the target baseline is mandatory. When configuration files, console state, and actual processes disagree, trust verified runtime evidence and record the discrepancy.
 
-## 设计目标架构
+## Design the target architecture
 
-按当前项目选择，而不是继承历史架构：
+Choose for the current project rather than inheriting a historical architecture:
 
-- 模型服务形态：实时、异步、批处理、流式、Agent、Embedding、重排、多模态或生成式媒体。
-- 运行方式：托管推理、容器、Kubernetes、裸机、多节点或混合部署。
-- 模型工件：权重版本、量化、Tokenizer/Processor、Chat Template、适配器和许可证。
-- 计算拓扑：加速器型号、卡数、节点、副本以及 TP/DP/PP/EP/CP/PD 等适用并行方式。
-- 请求入口：鉴权、API 协议、流式传输、网关、负载均衡、队列、限流、超时和重试。
-- 网络：公网、专线/VPN、VPC、NAT、DNS、证书、安全组、ACL 和出入方向依赖。
-- 存储：镜像、权重、共享文件系统、对象存储、日志、缓存和备份。
-- 运维：健康检查、日志、指标、告警、自动恢复、扩缩容和变更审计。
+- Service form: realtime, asynchronous, batch, streaming, agent, embedding, reranking, multimodal, or generative media.
+- Runtime form: managed inference, containers, Kubernetes, bare metal, multi-node, or hybrid.
+- Model artifacts: weight version, quantization, tokenizer or processor, chat template, adapters, and licenses.
+- Compute topology: accelerator model, device count, nodes, replicas, and applicable TP/DP/PP/EP/CP/PD parallelism.
+- Request entry: authentication, API protocol, streaming, gateway, load balancing, queues, rate limits, timeouts, and retries.
+- Network: public access, dedicated line or VPN, VPC, NAT, DNS, certificates, security groups, ACLs, and ingress/egress dependencies.
+- Storage: images, weights, shared filesystems, object storage, logs, caches, and backups.
+- Operations: health checks, logs, metrics, alerts, automatic recovery, scaling, and change audit.
 
-不得将客户端兼容、Tool Calling、Reasoning、结构化输出或附件能力仅根据模型名称判定；必须通过目标 API 和运行时验证。
+Never infer client compatibility, Tool Calling, Reasoning, structured output, or attachment support from the model name alone. Validate them through the target API and runtime.
 
-## 准备并执行部署
+## Prepare and execute the deployment
 
-实施前：
+Before implementation:
 
-1. 固化模型、镜像、依赖和部署配置的版本或摘要。
-2. 检查硬件、驱动、固件、运行时、算子和量化格式兼容性。
-3. 建立密钥注入方式，确保密码/API Key/私钥不写入仓库、镜像、日志或报告。
-4. 为已有环境保存配置、脚本、镜像/版本、权重清单和哈希。
-5. 准备不依赖新配置目录的回退步骤。
-6. 再次确认允许的资源、费用、停机和流量切换范围。
+1. Pin versions or digests for the model, image, dependencies, and deployment configuration.
+2. Check compatibility across hardware, drivers, firmware, runtime, operators, and quantization format.
+3. Define secret injection so passwords, API keys, and private keys never enter the repository, image, logs, or report.
+4. For an existing environment, preserve configuration, scripts, image and version details, the weight inventory, and hashes.
+5. Prepare rollback steps that do not depend on the new configuration directory.
+6. Reconfirm the authorized resource, cost, downtime, and traffic-switch scope.
 
-实施时保存命令、时间、操作者、资源 ID、实际镜像摘要、进程参数和异常。用户要求暂停时停止新的变更，不沿用旧授权继续。
+During implementation, record commands, timestamps, operator, resource IDs, actual image digests, process arguments, and exceptions. If the user asks to pause, stop new changes and do not extend prior authorization.
 
-## 分层验收
+## Layered acceptance
 
-按顺序验收：
+Validate in order:
 
-1. **基础设施**：计算、网络、存储、DNS、证书和权限。
-2. **运行时**：所有实例/Rank 就绪，实际进程、模型、卡数和并行拓扑正确。
-3. **接口**：模型列表、非流式、流式、错误码、超时和认证。
-4. **模型功能**：文本/多模态、Reasoning、Tool Calling、JSON、Embedding 等项目要求。
-5. **可靠性**：健康探针、重启恢复、实例异常、队列、限流、日志、指标和告警。
-6. **最小容量冒烟**：只证明目标请求形状可运行，不宣称为正式性能结论。
-7. **回退演练**：验证已知稳定版本可以恢复。
+1. **Infrastructure**: compute, network, storage, DNS, certificates, and permissions.
+2. **Runtime**: every instance and rank is ready, with the correct process, model, device count, and parallel topology.
+3. **Interface**: model listing, non-streaming, streaming, error codes, timeouts, and authentication.
+4. **Model capabilities**: required text or multimodal behavior, Reasoning, Tool Calling, JSON, Embedding, and other project-specific functions.
+5. **Reliability**: health probes, restart recovery, instance failures, queues, rate limits, logs, metrics, and alerts.
+6. **Minimum capacity smoke test**: proves only that the target request shape runs; it is not a formal performance result.
+7. **Rollback drill**: verifies recovery to the known stable version.
 
-正式吞吐、延迟、并发上限和性能最佳参数应交给独立的测试与调优流程。部署 Skill 不把一次冒烟数据当容量承诺。
+Route formal throughput, latency, concurrency limits, and optimal performance parameters to separate testing and tuning workflows. This skill never turns a smoke-test result into a capacity commitment.
 
-## 交付内容
+## Deliverables
 
-- 已确认的部署问询与基线。
-- 目标架构、依赖和安全边界。
-- 可复现部署脚本/IaC/镜像或操作步骤。
-- 模型、镜像、配置和权重版本清单。
-- API 使用、认证方式和客户端示例，但不包含真实密钥。
-- 监控、日志、告警、健康检查和日常运维说明。
-- 验收证据、已知限制、回退步骤和责任边界。
+- Confirmed deployment questionnaire and baseline.
+- Target architecture, dependencies, and security boundaries.
+- Reproducible deployment scripts, IaC, images, or operating steps.
+- Model, image, configuration, and weight version inventory.
+- API usage, authentication method, and client examples without real secrets.
+- Monitoring, logging, alerting, health checks, and routine operations guidance.
+- Acceptance evidence, known limits, rollback steps, and responsibility boundaries.
 
-当前项目涉及 GLM 或 Qwen 时，额外读取 [GLM/Qwen 部署分支](references/branches/glm-qwen.md)。
+For GLM or Qwen projects, also read the [GLM/Qwen deployment branch](references/branches/glm-qwen.md).

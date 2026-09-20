@@ -1,69 +1,69 @@
-# 部署基线模板
+# Deployment Baseline Template
 
-## 1. 项目标识
+## 1. Project identity
 
-- 项目/环境：
-- 部署类型：全新 / 重建 / 迁移 / 扩缩容 / 模板
-- 业务负责人：
-- 技术负责人：
-- 计划窗口：
+- Project/environment:
+- Deployment type: new / rebuild / migration / scale / template
+- Business owner:
+- Technical owner:
+- Planned window:
 
-## 2. 当前基线
+## 2. Current baseline
 
-- 当前服务和调用链：
-- 当前模型、权重 Revision、Tokenizer/Processor：
-- 当前镜像、框架、驱动/工具链：
-- 当前计算、拓扑、网络、存储：
-- 当前 API、鉴权和域名：
-- 当前监控、日志、告警和健康检查：
-- 当前配置与实际进程差异：
-- 证据时间与来源：
+- Current service and request path:
+- Current model, weight revision, tokenizer/processor:
+- Current image, framework, drivers/toolchain:
+- Current compute, topology, network, and storage:
+- Current API, authentication, and domain:
+- Current monitoring, logs, alerts, and health checks:
+- Differences between saved configuration and actual processes:
+- Evidence time and source:
 
-全新部署写“无现有服务”。迁移或重建必须记录源端实际运行证据。
+For a new deployment, write "no existing service." A migration or rebuild must record source-side runtime evidence.
 
-## 3. 目标基线
+## 3. Target baseline
 
-- 业务场景和真实请求：
-- 模型与功能合同：
-- 目标计算与并行拓扑：
-- 目标运行时与不可变镜像：
-- 目标网络、安全和鉴权：
-- 目标存储、备份和数据保留：
-- 目标 API 和客户端兼容：
-- 目标可用性、容量和运维：
+- Business scenario and real request:
+- Model and capability contract:
+- Target compute and parallel topology:
+- Target runtime and immutable image:
+- Target network, security, and authentication:
+- Target storage, backup, and retention:
+- Target API and client compatibility:
+- Target availability, capacity, and operations:
 
-## 4. 未决事项
+## 4. Open items
 
-| 项目 | 当前信息 | 缺失/冲突 | 获取方式 | 阻塞阶段 |
+| Item | Current information | Missing/conflicting | How to obtain | Blocking stage |
 |---|---|---|---|---|
 
-## 5. 变更计划
+## 5. Change plan
 
-| 顺序 | 动作 | 对象 | 影响 | 验证 | 回退点 |
+| Order | Action | Target | Impact | Verification | Rollback point |
 |---|---|---|---|---|---|
 
-## 6. 验收合同
+## 6. Acceptance contract
 
-- 基础设施验收：
-- 运行时验收：
-- API/认证验收：
-- 模型功能验收：
-- 可靠性/恢复验收：
-- 最小容量冒烟：
-- 安全与审计验收：
+- Infrastructure acceptance:
+- Runtime acceptance:
+- API/authentication acceptance:
+- Model-capability acceptance:
+- Reliability/recovery acceptance:
+- Minimum-capacity smoke test:
+- Security and audit acceptance:
 
-## 7. 授权与停止条件
+## 7. Authorization and stop conditions
 
-- 已批准的资源和操作：
-- 停机/切流窗口：
-- 费用和时长上限：
-- 必须停止的错误：
-- 审批状态：
+- Approved resources and actions:
+- Downtime/traffic-switch window:
+- Cost and duration limits:
+- Errors that require stopping:
+- Approval status:
 
-## 8. 备份与回退
+## 8. Backup and rollback
 
-- 已知稳定版本：
-- 配置/脚本/权重清单和哈希：
-- 备份位置：
-- 回退命令或操作：
-- 回退验证：
+- Known stable version:
+- Configuration/script/weight inventory and hashes:
+- Backup location:
+- Rollback commands or operations:
+- Rollback verification:

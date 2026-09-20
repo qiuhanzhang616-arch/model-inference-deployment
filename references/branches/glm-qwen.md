@@ -1,31 +1,31 @@
-# GLM/Qwen 部署分支
+# GLM/Qwen Deployment Branch
 
-只在当前项目使用 GLM、CodeGeeX/GLM 系列、Qwen/Qwen-VL 或其量化变体时读取。具体参数以模型卡、权重配置和实际运行时为准。
+Read this file only for GLM, CodeGeeX/GLM, Qwen/Qwen-VL, or their quantized variants. Derive exact parameters from the model card, weight configuration, and actual runtime.
 
-## 共同检查
+## Shared checks
 
-- 权重、Tokenizer/Processor、Chat Template 和生成配置来自同一兼容 Revision。
-- 确认模型是 Dense 还是 MoE、是否内置 Reasoning、是否包含 MTP/草稿层、是否需要自定义代码。
-- 量化格式必须与镜像、算子和硬件代际完全匹配；W4A8、W8A8、C8 等不能只根据文件名推断。
-- 验证普通聊天、流式、Reasoning、Tool Calling、结构化输出和目标上下文，而不是只请求 `/models`。
-- 以实际进程确认上下文、并行拓扑、显存利用率、批处理、图编译和缓存参数。
+- Weights, tokenizer or processor, chat template, and generation configuration come from one compatible revision.
+- Confirm whether the model is Dense or MoE, has built-in Reasoning, includes MTP or draft layers, or requires custom code.
+- Quantization must exactly match the image, operators, and hardware generation. Never infer W4A8, W8A8, C8, or similar formats from filenames alone.
+- Validate normal chat, streaming, Reasoning, Tool Calling, structured output, and target context instead of checking only `/models`.
+- Confirm context, parallel topology, memory utilization, batching, graph compilation, and cache parameters from actual processes.
 
-## GLM 注意项
+## GLM considerations
 
-- 核对对应运行时的 Reasoning Parser 和 Tool Call Parser，保留流中的 reasoning 字段。
-- MTP、MLAPO、FlashComm、EPLB、Shared Expert、稀疏量化算子和 PD 分离均属于模型/镜像/硬件组合能力，不是通用开关。
-- 多节点或 PD 部署需要逐个 Prefill/Decode Rank 验证，而不是只检查入口代理。
-- A2、A3 等硬件代际参数不得混用。
+- Confirm the runtime's Reasoning Parser and Tool Call Parser and preserve reasoning fields in streams.
+- MTP, MLAPO, FlashComm, EPLB, Shared Expert, sparse quantization operators, and PD disaggregation are capabilities of a particular model/image/hardware combination, not universal switches.
+- For multi-node or PD deployments, validate every Prefill and Decode rank rather than only the entry proxy.
+- Never mix parameters between A2, A3, or other hardware generations.
 
-## Qwen 注意项
+## Qwen considerations
 
-- 区分 Qwen 文本、Qwen-Coder、Qwen-VL、Qwen-Audio 和 MoE 版本；它们的 Processor、输入协议和资源模型不同。
-- Qwen-VL 验收要固定图片数、分辨率、视频帧和媒体传输方式。
-- 检查 Chat Template、Tool Calling 格式、Thinking 开关和流式字段是否与客户端适配器一致。
-- 多模态 Processor 缓存和媒体预处理节点需要纳入部署架构。
+- Distinguish text, Coder, VL, Audio, and MoE variants; their processors, input protocols, and resource models differ.
+- For Qwen-VL acceptance, freeze image counts, resolution, video frames, and media transport.
+- Check that the chat template, Tool Calling format, Thinking switch, and streaming fields match the client adapter.
+- Include multimodal processor caching and media preprocessing nodes in the architecture.
 
-## 分支验收补充
+## Additional branch acceptance
 
-- 至少一个普通响应、一个流式响应、一个目标能力请求和一个边界输入。
-- 返回内容、Reasoning、Tool Call/JSON 字段与客户端实际可见结果一致。
-- 压力后再次做功能回归，确认没有空流、Parser 错误或实例掉线。
+- At least one normal response, one streaming response, one target-capability request, and one boundary input.
+- Returned content, Reasoning, Tool Call or JSON fields match what the real client sees.
+- Run functional regression again after stress to catch empty streams, parser errors, or dropped instances.

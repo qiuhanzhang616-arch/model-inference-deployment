@@ -1,81 +1,81 @@
-# 部署前问询清单
+# Pre-deployment Checklist
 
-新项目先发送以下问询。预填已有答案，未知项写“待检查”。
+Send this questionnaire for every new project. Prefill known answers and mark unknown items as pending inspection.
 
-## A. 业务目标与范围
+## A. Business objective and scope
 
-1. 要部署什么能力，供谁使用：在线对话、Coding Agent、批处理、RAG、Embedding、重排、图像/文档/视频理解、语音或图像/视频生成？
-2. 是全新部署、迁移、原地重建、扩缩容，还是制作标准镜像/模板？
-3. 生产、预生产、测试还是 POC？计划用户数、平均与峰值请求、可用性和上线日期是什么？
-4. 哪些组件由本次工作负责，哪些已有平台、网络、鉴权、网关或监控必须复用？
-5. 必须遵守哪些区域、数据驻留、合规、审计和成本限制？
+1. What capability is being deployed, and for whom: online chat, coding agent, batch, RAG, embedding, reranking, image/document/video understanding, speech, or image/video generation?
+2. Is this a new deployment, migration, in-place rebuild, scaling change, or standard image/template?
+3. Is the target production, pre-production, test, or POC? What are the planned users, average and peak requests, availability target, and launch date?
+4. Which components are in scope, and which existing platform, network, authentication, gateway, or monitoring components must be reused?
+5. What region, data-residency, compliance, audit, and cost constraints apply?
 
-## B. 模型与功能合同
+## B. Model and capability contract
 
-1. 模型名称、版本、来源和不可变 Revision/权重路径是什么？许可证允许当前用途吗？
-2. 模型类型、参数规模、Dense/MoE、精度或量化格式是什么？
-3. Tokenizer、Processor、Chat Template、Adapter 和自定义代码是否齐全？
-4. 上下文/输入上限、输出上限和默认采样策略是什么？
-5. 是否要求流式、Reasoning、Tool Calling、JSON Schema、图片、音频、视频、批处理或 Embedding 接口？
-6. 对外 API 需要兼容哪种协议、SDK 和 Agent？模型别名是否固定？
+1. What are the model name, version, source, immutable revision or weight path, and license constraints?
+2. What are the model type, parameter size, Dense or MoE architecture, precision, and quantization format?
+3. Are the tokenizer, processor, chat template, adapters, and custom code complete?
+4. What are the context or input limit, output limit, and default sampling policy?
+5. Are streaming, Reasoning, Tool Calling, JSON Schema, image, audio, video, batch, or Embedding APIs required?
+6. Which API protocol, SDK, and agent must the service support? Is the model alias fixed?
 
-## C. 工作负载与容量
+## C. Workload and capacity
 
-1. 给出一个真实请求和期望输出。
-2. 输入和输出的 P50、P95、最大值及单位是什么？
-3. 平均、峰值、突发并发/QPS 和会话持续时间是什么？是否允许排队？
-4. 是否有重复前缀、共享上下文、缓存或多轮历史？
-5. 容量不足时采用排队、限流、扩容、降级还是失败？
+1. Provide a real request and expected output.
+2. What are P50, P95, and maximum input and output sizes, with units?
+3. What are average, peak, and burst concurrency or QPS and session duration? Is queueing allowed?
+4. Are prefixes, shared context, cache entries, or conversation history reused?
+5. When capacity is insufficient, should the system queue, rate-limit, scale, degrade, or fail?
 
-## D. 平台与硬件
+## D. Platform and hardware
 
-1. 云、本地、Region/AZ、账号/项目和目标服务形态是什么？
-2. 加速器型号/代际、显存或 HBM、卡数、节点数、CPU、内存和架构是什么？
-3. 资源是独占还是共享？现有配额、规格和镜像仓库是否可用？
-4. 是否已有 TP/DP/PP/EP/CP/PD 拓扑要求，还是需要根据模型和负载设计？
-5. 驱动、固件、工具链和基础镜像有哪些版本限制？
+1. What cloud or local platform, region/AZ, account or project, and service form are targeted?
+2. What accelerator model and generation, VRAM or HBM, device count, nodes, CPU, memory, and architecture are available?
+3. Are resources dedicated or shared? Are quota, shapes, and image registries available?
+4. Is TP/DP/PP/EP/CP/PD topology prescribed, or should it be designed from the model and workload?
+5. What driver, firmware, toolchain, and base-image version limits apply?
 
-## E. 网络、安全与鉴权
+## E. Network, security, and authentication
 
-1. 调用来自公网、VPC、专线/VPN 还是同集群？完整调用链是什么？
-2. 是否允许公网 IP；是否必须通过 NAT、ELB/API 网关、私网 DNS 或固定域名？
-3. 需要开放哪些方向、地址段和端口？安全组、ACL、防火墙和代理由谁管理？
-4. TLS 证书来源、域名、轮换和私有 CA 要求是什么？
-5. 使用 IAM、API Key、JWT、企业鉴权还是多租户 Key？密钥如何安全注入和轮换？
-6. 是否要求用户级审计、配额、费用或流量隔离？
+1. Do calls originate from the internet, VPC, dedicated line or VPN, or the same cluster? What is the full path?
+2. Is a public IP allowed? Must traffic use NAT, ELB/API gateway, private DNS, or a fixed domain?
+3. Which directions, CIDRs, and ports are required, and who manages security groups, ACLs, firewalls, and proxies?
+4. What are the certificate source, domain, rotation, and private-CA requirements?
+5. Is authentication IAM, API key, JWT, enterprise identity, or tenant-specific keys? How are secrets injected and rotated?
+6. Are per-user audit, quotas, cost allocation, or traffic isolation required?
 
-## F. 存储与数据
+## F. Storage and data
 
-1. 权重、镜像、配置、缓存和日志放在哪里？容量、性能和挂载协议是什么？
-2. 是否需要共享文件系统、对象存储、离线下载或无公网安装？
-3. 权重和配置如何校验完整性？是否已有备份和保留策略？
-4. 是否含敏感数据，日志和请求正文允许保留到什么程度？
+1. Where will weights, images, configuration, cache, and logs live? What capacity, performance, and mount protocol are required?
+2. Is a shared filesystem, object storage, offline download, or air-gapped installation required?
+3. How are weight and configuration integrity verified? What backup and retention policies exist?
+4. Does the system handle sensitive data, and how much of request bodies and logs may be retained?
 
-## G. 运行时与现状
+## G. Runtime and current state
 
-1. 推理框架、版本、镜像标签/摘要和启动方式是什么？
-2. 若已有服务，实际运行的进程参数、环境变量、模型、卡数和拓扑是什么？
-3. 当前健康检查、日志、指标、告警、自动恢复和扩缩容是什么？
-4. 已知的 OOM、启动失败、算子、通信、空响应、证书或兼容性问题有哪些？
+1. What inference framework, version, image tag or digest, and launch mechanism are used?
+2. For an existing service, what process arguments, environment variables, model, device count, and topology are actually running?
+3. What health checks, logs, metrics, alerts, recovery, and scaling already exist?
+4. What known OOM, startup, operator, communication, empty-response, certificate, or compatibility issues exist?
 
-## H. 验收与变更授权
+## H. Acceptance and change authorization
 
-1. 功能、可靠性和最小容量验收分别是什么？
-2. 谁提供测试数据并判断模型输出正确？
-3. 允许创建或修改哪些资源？是否批准停机、重启、切流和扩缩容？
-4. 维护窗口、最大费用、最长执行时间和停止条件是什么？
-5. 已知稳定版本、备份位置、回退时间目标和审批人是谁？
+1. What are the functional, reliability, and minimum-capacity acceptance criteria?
+2. Who provides test data and judges model correctness?
+3. Which resources may be created or changed? Are downtime, restart, traffic switch, and scaling approved?
+4. What maintenance window, maximum cost, maximum duration, and stop conditions apply?
+5. What is the known stable version, backup location, rollback-time objective, and approver?
 
-## 执行前确认块
+## Pre-execution confirmation
 
-得到答案后，先向用户展示：
+Before implementation, show the user:
 
-- 已确认范围和目标；
-- 当前基线与目标基线；
-- 未知或冲突项；
-- 拟创建/修改的资源和文件；
-- 网络、安全、数据和密钥处理方式；
-- 预计停机、费用、执行时间和影响；
-- 验收清单、停止条件及回退方案。
+- confirmed scope and objectives;
+- current and target baselines;
+- unknown or conflicting items;
+- resources and files to create or modify;
+- network, security, data, and secret handling;
+- expected downtime, cost, duration, and impact;
+- acceptance checklist, stop conditions, and rollback plan.
 
-用户确认后再执行对应变更。
+Execute only the changes the user confirms.
