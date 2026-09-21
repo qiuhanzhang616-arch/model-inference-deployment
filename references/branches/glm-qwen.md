@@ -24,8 +24,6 @@ Read this file only for GLM, CodeGeeX/GLM, Qwen/Qwen-VL, or their quantized vari
 - Check that the chat template, Tool Calling format, Thinking switch, and streaming fields match the client adapter.
 - Include multimodal processor caching and media preprocessing nodes in the architecture.
 
-For a concrete Huawei Cloud public-cloud example, see [Qwen3.8-27B W8A8 on ModelArts Standard](../../examples/qwen38-modelarts-public-cloud/README.md). Treat it as a versioned example rather than a universal sizing rule. Replace every environment placeholder and revalidate the target region, image digest, accelerator flavor, and workload.
-
 ## Additional branch acceptance
 
 - At least one normal response, one streaming response, one target-capability request, and one boundary input.
